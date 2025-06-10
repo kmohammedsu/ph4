@@ -4,12 +4,11 @@
 ### 
 Hey there! 👋
 
-Ever wondered if we can use data science to understand how countries deal with health problems — like which ones are doing well, which are struggling, and what role things like money or corruption play?
+Ever wondered if we can use data science to understand how countries deal with health problems-like which ones are doing well, which are struggling, and what role things like money or corruption play?
 
-Well, that’s exactly what we tried to do using a few math tools (don’t worry, we’ll keep it simple) — and we learned some pretty interesting stuff and we will definetly will make you understand also.
+Well, that’s exactly what we tried to do using a few math tools (don’t worry, we’ll keep it simple)-and we learned some pretty interesting stuff and we will definetly will make you understand also.
 
 # INTRODUCTION 
-
 Health outcomes around the world are influenced by a mix of disease prevalence, political integrity, and financial investment. In this project, we explore the intersection of three domains:
 
 1. Disease-specific mortality rates
@@ -34,9 +33,11 @@ The data comes from three sources:
 
 3. Our World in Data: Political corruption index
 
-# THEORETICAL BACKGROUND
+# THEORETICAL BACKGROUND 
 
 ## Principal component analysis(PCA)
+
+![image.png](attachment:045ca82a-a5a3-4574-aa5c-ee2f1b4f57d5.png)
  
 PCA is a method for reducing the dimensionality of data by transforming it into a set of orthogonal components that capture the most variance. It is used for:
 
@@ -55,6 +56,7 @@ Scaling is important for fair component calculation
 Use of scree plots helps in choosing the optimal number of components
 
 ## Singular Value Decomposition (SVD)
+![image.png](attachment:1b2d0807-794c-44d4-8bff-15a94009cb98.png)
 
 SVD is a matrix factorization technique that expresses a data matrix as the product of three matrices: U, Σ, and V*. It is closely related to PCA and offers:
 
@@ -101,7 +103,6 @@ Reconstruction error plot: For SVD rank selection
 Dendrograms: For hierarchical clustering
 
 # METHODOLOGY 
-
 ### Cleaning Up the Data ( Making It Actually Usable)
 
 Before jumping into the fun stuff like SVD and clustering, we had to do some serious cleanup. You know how data in the real world is never quite plug-and-play? Yeah, this was one of those cases.
@@ -166,22 +167,22 @@ Ward: Best separation with 4 interpretable groups.
 Average, Complete, Centroid, Single: Explored for comparison.
 Visualized using dendrograms, and analyzed clusters by political corruption and health spending distributions.
 
-# RESULTS & DISCUSSION
-
+# RESULTS 
 ### SVD Explained Variance
 
 The SVD cumulative explained variance plot tells us about the proportion of data structure that we can explain by keeping just a small number of components. The shape of this plot matters: it tells us how quickly we can represent our data.
 
 ![download.png](attachment:f019fb37-2286-4163-97ff-9c45427a18d6.png)
+**This plot illustrates the cumulative variance explained by the top singular values of the data matrix**
 
 *Elbow Point:-*
 
-There's a noticeable "elbow" or inflection point around rank 6–8. Using ranks in the range of 6–10 is likely optimal for balancing performance and complexity.
+There's a noticeable "elbow" or inflection point around rank 6-8. Using ranks in the range of 6-10 is likely optimal for balancing performance and complexity.
 
 Already, at 6 components, we are explaining virtually 85% of the variance.At 10 components, we are more than 90%.
 
 
-This tells us that while we began with over 100 health and governance-related features, the core structure of the dataset is driven by fewer hidden  patterns. The shape of the curve — steep at first and leveling off — confirms that most variance can be compressed into a small number of key directions.
+This tells us that while we began with over 100 health and governance-related features, the core structure of the dataset is driven by fewer hidden  patterns. The shape of the curve-steep at first and leveling off-confirms that most variance can be compressed into a small number of key directions.
 
 This decomposition is ideal for both dimensionality reduction and noise removal. The "elbow" in the curve around 6 components served as a practical cutoff for further analysis and reconstruction. This is consistent with intuition in the real world: most health and economic outcomes are likely to co-occur in worldwide trends. For example, low GDP and high corruption tend to coincide with high infectious disease rates.
 
@@ -190,10 +191,11 @@ This decomposition is ideal for both dimensionality reduction and noise removal.
 
 This graph shows how well we can recover the original dataset with a small number of SVD components. As rank increases, the mean squared error drops precipitously and then begins to plateau:
 ![download-1.png](attachment:ce5756ba-c781-4cc5-a122-79da680b494f.png)
+**This graph displays how reconstruction error (mean squared error) drops as we increase the number of singular values used.**
 
 At rank 6, reconstruction is already fairly close.
 
-Moving beyond rank 10 adds very little value — the classic sign of diminishing returns.
+Moving beyond rank 10 adds very little value-the classic sign of diminishing returns.
 
 Why it matters: it demonstrates that most of the health, economic, and political structure across countries can be accounted for by a number of underlying themes. These themes are what PCA and SVD components help us reveal.
 
@@ -202,6 +204,7 @@ Why it matters: it demonstrates that most of the health, economic, and political
 
 We were interested to know if SVD could also handle missing values. So we carried out matrix completion with three levels of missingness: 10%, 20%, and 30%.
 ![download-2.png](attachment:9fd9f008-7a42-40b4-aa70-c1e40326f697.png)
+            **SVD performance under simulated missingness (10%, 20%, 30%) and how well it imputes missing data.**
 
 The results:
 
@@ -209,9 +212,9 @@ There is a drastic fall in errors with an increase in rank, especially in 10% mi
 
 The performance remains flat even below 30% missing after rank 6.
 
-The U matrix (left singular vectors) tells us how individual observations (e.g., countries or country-years) align with each latent pattern or component. For example, some countries load heavily onto components representing high chronic disease burdens or high corruption.
+The U matrix (left singular vectors) tells us how individual observations (e.g.,countries or country-years) align with each latent pattern or component. For example, some countries load heavily onto components representing high chronic disease burdens or high corruption.
 
-The V* matrix (right singular vectors) indicates how each original variable — causes of death, spending, corruption — contributes to those latent components. High weights in V* identify which variables are driving each trend.
+The V* matrix (right singular vectors) indicates how each original variable-causes of death, spending, corruption-contributes to those latent components. High weights in V* identify which variables are driving each trend.
 
 This helped us not only compress the data but also understand what dimensions matter most, such as variables tied to governance or specific disease groups.
 
@@ -220,6 +223,7 @@ This helped us not only compress the data but also understand what dimensions ma
 
 Here we plotted how well the imputed data matched actual data for two ranks (6 and 8). Points close to the red diagonal line indicate better accuracy.
 ![download-3.png](attachment:30232d3c-c2de-451e-b7fd-09ad7fb1fd5f.png)
+**Scatter plots comparing predicted vs actual values after matrix completion at two ranks**
 
 Rank 6 was already strong, but Rank 8 gave a slightly tighter cluster around the diagonal.
 
@@ -229,6 +233,7 @@ This is particularly useful for policy configurations, where we are typically to
 
 ### KMeans Elbow Method
 ![download-4.png](attachment:7ab0f386-a290-4e31-8b50-7ea6dc897afa.png)
+**Inertia vs cluster count to determine optimal number of clusters**
 
 We used the inertia curve to decide on how many clusters to use in KMeans. The sudden drop in inertia from k=2 to k=4 showed that 4 clusters were a good representation of the natural groupings.
 
@@ -247,11 +252,12 @@ Clear segregation between groups, especially along the first dimension
 
 Visual confirmation that PCA effectively compressed the data
 
-This means global health patterns aren't random — countries with similar characteristics cluster around one another in our reorganized space.
+This means global health patterns aren't random-countries with similar characteristics cluster around one another in our reorganized space.
 
 
 ### Centroid Visualization
 ![download-7.png](attachment:c02fe0b5-43ff-4770-84c4-3c6870f69ddb.png)
+**Cluster centroids plotted in the same reduced space.**
 
 We overlaid cluster centroids onto our PCA scatter plot:
 
@@ -263,33 +269,35 @@ This is strong evidence that KMeans captured distinct global health profiles.
 
 ### GDP Health Spending by Cluster
 ![download-8.png](attachment:fb483d96-c925-4b94-a3f1-c779dda77452.png)
+**Boxplots comparing health spending across clusters.**
 
 Our final plot looked at how much money each group devotes to health (as a percentage of GDP):
 
-Cluster 0 spent the highest — this cluster likely consists of wealthier countries with wealthier health-funded healthcare systems.
+Cluster 0 spent the highest-this cluster likely consists of wealthier countries with wealthier health-funded healthcare systems.
 
 Cluster 3 spent the lowest, maybe for poorer or war-hit regions.
 
 Clusters 1 and 2 were in between.
 
-This makes sense: it means our clumping is important beyond theory. Countries didn't clump together at random — clumping together revealed large health and governance differences.
+This makes sense: it means our clumping is important beyond theory. Countries didn't clump together at random-clumping together revealed large health and governance differences.
 
 
 ### Political Corruption by Cluster:
 
 ![download-9.png](attachment:5c9414f7-6689-420b-9224-ceeae5c532e9.png)
+**Boxplots showing corruption index scores across clusters.**
 
 This plot shows how the corruption index varies across clusters (0 = least corrupt, 1 = most corrupt). The differences are significant:
 
-Cluster 0 has extremely low corruption — likely made up of countries with strong governance, regulatory systems, and public accountability. These countries also had the highest health spending.
+Cluster 0 has extremely low corruption-likely made up of countries with strong governance, regulatory systems, and public accountability. These countries also had the highest health spending.
 
 Cluster 1 spans a wide corruption range, suggesting it includes countries undergoing political or institutional transition.
 
 Cluster 2 represents a mix, with some clean and some corrupt countries, but not the worst.
 
-Cluster 3 is clearly the most corrupt — its entire boxplot sits above 0.4. This strongly suggests a connection between poor governance and weak health outcomes.
+Cluster 3 is clearly the most corrupt-its entire boxplot sits above 0.4. This strongly suggests a connection between poor governance and weak health outcomes.
 
-This validates the importance of including governance metrics when analyzing health data — they matter a lot.
+This validates the importance of including governance metrics when analyzing health data-they matter a lot.
 
 ### Top Causes of Death by Cluster
 ![download-10.png](attachment:c61f981b-0f12-41fc-85f4-7940c48ee619.png)
@@ -300,11 +308,11 @@ Cluster 2 has dangerously high death rates from cardiovascular diseases, likely 
 
 Cluster 0 has a more balanced mortality profile. Neoplasms and cardiovascular conditions dominate, typical of high-income countries with aging populations.
 
-Cluster 3 has a distinct burden of infectious diseases like respiratory infections, tuberculosis, and HIV/AIDS — pointing to unstable or under-resourced health systems.
+Cluster 3 has a distinct burden of infectious diseases like respiratory infections, tuberculosis, and HIV/AIDS-pointing to unstable or under-resourced health systems.
 
 Cluster 1 has relatively lower death rates across all categories, possibly indicating strong recent health gains.
 
-This chart underscores the divergence in global health challenges. Not every country is battling the same enemy — policy priorities must reflect this diversity.
+This chart underscores the divergence in global health challenges. Not every country is battling the same enemy-policy priorities must reflect this diversity.
 
 
 ### Death Rate Over Time by Cluster 
@@ -314,14 +322,13 @@ Looking at how death rates have changed from 2010 to 2021, we see clear trends:
 
 Cluster 1 shows a steady decline in death rates, suggesting effective health reforms, growing investment, or economic development. This is a major success story.
 
-Cluster 0 remains mostly flat — it may have already optimized many systems and hit a performance plateau.
+Cluster 0 remains mostly flat-it may have already optimized many systems and hit a performance plateau.
 
-Cluster 3 initially improved but shows a reversal around 2020 — likely due to COVID-19, economic crisis, or governance failure.
+Cluster 3 initially improved but shows a reversal around 2020-likely due to COVID-19, economic crisis, or governance failure.
 
 Cluster 2 is alarming: already high death rates got even worse post-2019. This may signal that these countries lacked the resilience to respond to global shocks.
 
-This time series brings urgency to the analysis. While some regions thrive, others are backsliding — and that demands global attention.
-
+This time series brings urgency to the analysis. While some regions thrive, others are backsliding-and that demands global attention.
 
 ### Hierarchical Clustering Dendrograms
 ![cc2aa9c3-e5ae-4ee4-9109-8563d1760a8d.png](attachment:78ad4527-2d65-4557-bf42-92fd03c5dc43.png)
@@ -331,20 +338,19 @@ This time series brings urgency to the analysis. While some regions thrive, othe
 ![848aaa77-12ad-4009-a063-d102a9031d1d.png](attachment:409ad3d8-1085-4c61-93f8-c58d80833e7e.png)
 
 
-We explored five linkage strategies — Ward, average, complete, centroid, and single — to understand how countries group together based on their health and governance profiles.
+We explored five linkage strategies-Ward, average, complete, centroid, and single-to understand how countries group together based on their health and governance profiles.
 
 Ward linkage (our primary choice) minimizes the variance within clusters. The dendrogram with a 4-cluster cut line clearly defines separate groups at a moderate height, indicating meaningful structure in the data.
 
 Average linkage (UPGMA) merges based on average distances between all pairs. It yielded more balanced merges but less sharp distinctions compared to Ward.
 
-Complete linkage merges based on the furthest distance within clusters — useful for finding tight, well-separated groups. The dendrogram showed more conservative merging.
+Complete linkage merges based on the furthest distance within clusters-useful for finding tight, well-separated groups. The dendrogram showed more conservative merging.
 
-Centroid linkage focuses on geometric centers — visually similar to average, but occasionally misleads when clusters vary greatly in size.
+Centroid linkage focuses on geometric centers-visually similar to average, but occasionally misleads when clusters vary greatly in size.
 
-Single linkage uses the closest pair of points and is prone to “chaining,” often forming one long, thin cluster — as seen here, where it failed to separate groups well.
+Single linkage uses the closest pair of points and is prone to “chaining,” often forming one long, thin cluster-as seen here, where it failed to separate groups well.
 
 Among these, Ward’s method provided the cleanest and most interpretable clustering.
-
 
 ![32be9f97-2f40-45da-a518-1f53784d0d51.png](attachment:5ff31942-4d9d-4e6d-8c4c-5600130fd00e.png)
 Since the Ward linkage dendrogram provided the clearest and most balanced grouping, we chose it for final clustering. By cutting the dendrogram at height 45, we identified 4 distinct clusters. The red dashed line in the plot highlights the cut point, effectively splitting the data into four meaningful groups.
@@ -357,23 +363,20 @@ We evaluated the clusters from the Ward method (cut at 4 groups) against two key
 1. Political Corruption Index by Hierarchical Cluster
  ![323efca2-cd58-4418-a8aa-34c862defe10.png](attachment:509100b1-435c-4558-8f0d-b301f1454d74.png)
 
-Cluster 4 has the lowest corruption scores — most values close to 0, confirming a group of well-governed countries.
+Cluster 4 has the lowest corruption scores-most values close to 0, confirming a group of well-governed countries.
 
-Cluster 1 has consistently high corruption — median around 0.6+, with tight spread.
+Cluster 1 has consistently high corruption-median around 0.6+, with tight spread.
 
 Clusters 2 and 3 are mixed: 2 includes both low and high corruption countries (wide box), and 3 shows moderate corruption.
 
-This validates our earlier conclusion: clustering captures more than just health trends — it reflects political realities too.
+This validates our earlier conclusion: clustering captures more than just health trends-it reflects political realities too.
 
 2. GDP Spent on Health by Hierarchical Cluster
-<p align="center">
-  <img src="https://raw.githubusercontent.com/kmohammedsu/ph4/main/Visualizations/GDP_Spent_Health.png" width="100%" title="Intro Card" alt="Intro Card">
-</p>
+![976ea760-a2ce-4912-9b3b-a987a427cb8b.png](attachment:090ba563-a77e-4f5a-a153-607ec262e5d5.png)
 
+Cluster 4 again stands out: these countries spend the most on public health-median over 8%, with some spending over 14%.
 
-Cluster 4 again stands out: these countries spend the most on public health — median over 8%, with some spending over 14%.
-
-Cluster 1 has the lowest spending — mostly below 4%.
+Cluster 1 has the lowest spending-mostly below 4%.
 
 Clusters 2 and 3 are in between, suggesting countries in transition or with mixed policies.
 
@@ -392,19 +395,84 @@ Cluster C(Kmeans cluster'2',cluster '3' in hierarchical) (High chronic disease b
 
 Cluster D(Kmeans cluster'3',cluster '1' in hierarchical) (High corruption, high infectious disease burden): These countries had poor governance, low spending, and high HIV/TB/respiratory death rates. They also showed vulnerability to pandemic shocks. Likely includes conflict-affected or economically constrained regions.
 
-These interpretations are grounded in real policy implications: the clusters are not just statistical — they reflect how governance, investment, and health interact.
+These interpretations are grounded in real policy implications: the clusters are not just statistical-they reflect how governance, investment, and health interact.
 
+
+# DISCUSSION
+After applying Singular Value Decomposition (SVD) and clustering techniques to our merged global health dataset, several key insights emerged that deserve deeper discussion and interpretation.
+
+1. Singular Value Decomposition (SVD) Interpretation
+
+SVD revealed that most of the variance in the data could be captured by a relatively small number of singular components:
+
+Top Singular Vectors (U matrix): These reflected how countries or country-years align with latent patterns such as high health expenditure or disease burden.
+
+Singular Values (Σ matrix): The rapid drop in singular values showed that much of the data structure is concentrated in the first few components.
+
+Right Singular Vectors (V matrix): These indicated which features (causes of death, corruption index, health spending) are most influential in defining each component.
+
+With just 6-10 components, we retained over 90% of the variance. This dimensionality reduction allowed for effective visualization, clustering, and even reconstruction of missing data.
+
+2. Matrix Completion and Reconstruction
+
+One of the practical applications of SVD was matrix completion:
+
+When simulating missing values (10-30%), we found that reconstruction was still highly accurate using the top 6-8 components.
+
+This proves that global health data, while complex, is governed by a few dominant trends that can be extracted.
+
+The imputed vs. actual plots confirmed that even sparse data can be recovered with high precision using low-rank approximations.
+
+This approach is especially useful in global datasets, where data may be inconsistently reported across countries.
+
+3. Clustering Interpretation (KMeans)
+
+We applied KMeans clustering to the SVD-reduced data, which revealed four distinct clusters:
+
+Cluster 0: High health spending, low corruption-likely includes high-income countries with well-funded healthcare.
+
+Cluster 1: Moderate health spending and varied corruption-may represent transitional or emerging economies.
+
+Cluster 2: Mixed trends, not clearly aligned-possibly a blend of nations with moderate performance across metrics.
+
+Cluster 3: Low spending and high corruption-likely includes low-income or politically unstable countries.
+
+The clear separation in the PCA-projected scatterplots and centroid plots validated the strength of the clustering.
+
+4. Real-World Implications
+
+These insights highlight the potential of SVD and clustering to:
+
+->Simplify noisy, high-dimensional data
+
+->Expose underlying global health inequalities
+
+->Categorize countries based on meaningful health and governance features
+
+Such models can inform public health strategies by:
+
+->Identifying at-risk groups or underperforming regions
+
+->Supporting funding decisions based on need and capacity
+
+->Guiding international collaborations and interventions
+
+5. Limitations and Future Directions
+
+->Temporal dynamics: We treated each year independently. Longitudinal SVD or dynamic clustering could improve temporal modeling.
+
+
+->Fixed number of clusters: KMeans required us to pre-select k. Hierarchical clustering or density-based methods could offer more flexibility.
 
 # CONCLUSION
 So… can we use math to uncover global health patterns?
-Turns out — yes, and it’s actually kind of amazing.
+Turns out-yes, and it’s actually kind of amazing.
 
-By using tools like PCA and SVD, we took a messy pile of numbers — deaths from dozens of causes, healthcare spending, and corruption scores — and turned it into a few clear themes. These themes captured the heart of what’s happening around the world: who's struggling, who's improving, and what might be holding them back.
+By using tools like PCA/SVD, we took a messy pile of numbers-deaths from dozens of causes, healthcare spending, and corruption scores-and turned it into a few clear themes. These themes captured the heart of what’s happening around the world: who's struggling, who's improving, and what might be holding them back.
 
-We then grouped countries based on those themes. And guess what? The math figured out what we probably would’ve guessed — countries with similar health problems, similar government quality, and similar spending levels naturally clump together.
+We then grouped countries based on those themes. And guess what? The math figured out what we probably would’ve guessed-countries with similar health problems, similar government quality, and similar spending levels naturally clump together.
 
 The wild part? We didn’t tell the model what to look for. It just found the structure all on its own.
 
-This isn’t just about cool plots (though we had those too). This kind of analysis could actually help:\n- Health organizations spot at-risk regions\n- Governments compare themselves to similar countries\n- Decision-makers track progress — or catch problems early
 
-In the end, this project wasn’t just a data science exercise. It was a glimpse into how algorithms, if used thoughtfully, can help us understand the world better — and maybe even make it a little healthier.
+In the end, this project wasn’t just a data science exercise. It was a glimpse into how algorithms, if used thoughtfully, can help us understand the world better-and maybe even make it a little healthier.
